@@ -179,6 +179,7 @@ public class principal {
 
     }
 
+    //Clase principal
     public static void main(String ...args){
 
         String espaciado = "=====";
