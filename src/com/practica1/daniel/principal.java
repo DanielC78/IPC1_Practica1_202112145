@@ -1,21 +1,35 @@
 package com.practica1.daniel;
 
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.Random;
+import java.util.concurrent.TimeoutException;
 
 public class principal {
 
     //Datos del jugador
+    private static int idJugador = 1;
     private static String nombre_jugador;
     private static int vidas = 3;
     private static int punteo = 0;
 
+    //Matriz para jugadores
+    private static String matrizJugadores[][] = new String[50][3];
+
+
     //Items del juego
-    private static String FANTASMA = " @ ";
-    private static String PREMIO_SIMPLE = " 0 ";
-    private static String PREMIO_ESPECIAL = " $ ";
-    private static String PARED = " X ";
-    private static String PACMAN = " < ";
+    final private static String FANTASMA = " @ ";
+    final private static String PREMIO_SIMPLE = " 0 ";
+    final private static String PREMIO_ESPECIAL = " $ ";
+    final private static String PARED = " X ";
+    final private static String PACMAN = " < ";
+
+    //Teclas de movimiento
+    final private static String ARRIBA = "8";
+    final private static String ABAJO = "5";
+    final private static String DERECHA = "6";
+    final private static String IZQUIERDA = "4";
+    final private static String PAUSA = "f";
 
     //Variables para Scanner
     private static int opciones_menu;
@@ -23,8 +37,9 @@ public class principal {
     private static int opciones_paredes;
     private static int opciones_trampas;
 
-
+    //Tablero y consola
     private static String opciones_tablero;
+    private static String espaciado = "======";
 
     //Matriz
     private static int nFilas, nColumnas;
@@ -32,6 +47,7 @@ public class principal {
 
     //Variables de la clase Scanner
     private static Random ran = new Random();
+    private static Scanner accionesJuego = new Scanner(System.in);
     private static Scanner nombreJugador = new Scanner(System.in);
     private static Scanner opcionesMenu = new Scanner(System.in);
     private static Scanner opcionTablero = new Scanner(System.in);
@@ -46,18 +62,127 @@ public class principal {
         System.out.println("Vidas: " + vidas);
 
     }
+
+    //Metodo para el menu principal
+    public static void menuPrincipal(){
+
+        boolean val1 = true;
+        while(val1){
+            System.out.println(espaciado + "MENÚ DE INICIO"+espaciado +
+                    "\n1. Iniciar Juego\n" +
+                    "2. Historial de partidas\n" +
+                    "3. Salir\r");
+
+            opciones_menu = opcionesMenu.nextInt();
+
+            switch (opciones_menu){
+                case 1 :
+                    val1 = false;
+
+                    System.out.println("Escriba tu nombre: \r");
+                    nombre_jugador = nombreJugador.nextLine();
+
+                    System.out.println("Bienvenido " + nombre_jugador + "\n");
+                    matrizJugadores[idJugador][0] = nombre_jugador;
+                    idJugador++;
+
+                    System.out.print(espaciado +" ESPECIFICAR TABLERO"+espaciado+
+                            "\nPOR FAVOR INGRESE LOS SIGUIENTES VALORES\n\r");
+
+                    System.out.print("TABLERO:  ");
+                    opciones_tablero = opcionTablero.nextLine();
+
+                    System.out.print("PREMIOS [1-40]:   ");
+                    opciones_premios = opcionPremios.nextInt();
+
+                    System.out.print("PAREDES [1-20]:   ");
+                    opciones_paredes = opcionesParedes.nextInt();
+
+                    System.out.print("TRAMPAS [1-20]:   ");
+                    opciones_trampas = opcionesTrampas.nextInt();
+
+                    //Opciones para el tablero
+                    switch (opciones_tablero.toUpperCase()){
+                        case "P":
+                            nFilas = 7;
+                            nColumnas = 8;
+                            llenarTablero();
+                            break;
+
+                        case "G":
+                            nFilas = 12;
+                            nColumnas = 12;
+                            llenarTablero();
+                            break;
+                    }
+                    break;
+                case 2 :
+                    val1 = false;
+                    historialPartidas();
+
+                    break;
+
+                case 3 : System.out.println("Hasta pronto");
+                    break;
+
+                default: System.out.println("Debe elegir un número entre 1 y 3 ");
+            }
+        }
+    }
+
+    public static void historialPartidas(){
+        System.out.println(espaciado + "HISTORIAL DE PARTIDAS" + espaciado);
+        matrizJugadores[0][0] = "No.     ";
+        matrizJugadores[0][1] = "USUARIO       ";
+        matrizJugadores[0][2] = "PUNTEO";
+
+
+        if(matrizJugadores[1][0] != null){
+            for (int i = 0 ; i < matrizJugadores.length; i++ ){
+                for ( int j = 0 ; j < matrizJugadores[i].length; j++){
+                    if(matrizJugadores[i][j] != null){
+                        if(i == 0){
+                            System.out.print(matrizJugadores[i][j]);
+                        }else {
+                            System.out.print(matrizJugadores[i][j] + "      ");
+                        }
+                        if( j == 2){
+                            System.out.println();
+                        }
+
+                    }
+                }
+            }
+        } else{
+            System.out.println("Aun no hay ninguna partida\n");
+            menuPrincipal();
+        }
+
+    }
     //Metodo para movimientos
-    public static void movimientosPacman(String tecla){
-        switch (tecla.toString().toUpperCase()){
-            case "8":
-                break;
-            case "5":
-                break;
-            case "6":
-                break;
-            case "4":
-                break;
-            default: System.out.println("Debe ingresar una tecla válida");
+    public static void movimientosPacman(){
+
+        boolean val = true;
+        while(val){
+            String tecla;
+            System.out.print("Accion : ");
+            tecla = accionesJuego.nextLine();
+
+            if( tecla == ARRIBA || tecla == ABAJO || tecla == DERECHA || tecla == IZQUIERDA || tecla.toLowerCase() == PAUSA){
+                val = false;
+                switch (tecla){
+                    case ARRIBA:
+                        break;
+                    case ABAJO:
+                        break;
+                    case DERECHA:
+                        break;
+                    case IZQUIERDA:
+                        break;
+                }
+
+
+            }
         }
 
     }
@@ -165,6 +290,7 @@ public class principal {
 
         dibujarTablero();
         estadisticasJugador();
+        movimientosPacman();
 
     }
 
@@ -179,71 +305,12 @@ public class principal {
 
     }
 
+    public static void validacionMovimientos(){
+
+    }
     //Clase principal
     public static void main(String ...args){
 
-        String espaciado = "=====";
-
-        boolean val1 = true;
-
-        while(val1){
-            System.out.println(espaciado + "MENÚ DE INICIO"+espaciado +
-                    "\n1. Iniciar Juego\n" +
-                    "2. Historial de partidas\n" +
-                    "3. Salir");
-
-            opciones_menu = opcionesMenu.nextInt();
-
-            switch (opciones_menu){
-                case 1 :
-                    val1 = false;
-
-                    System.out.println("Escriba tu nombre: \r");
-                    nombre_jugador = nombreJugador.nextLine();
-
-                    System.out.println("Bienvenido " + nombre_jugador + "\n");
-
-
-                    System.out.print(espaciado +" ESPECIFICAR TABLERO"+espaciado+
-                            "\nPOR FAVOR INGRESE LOS SIGUIENTES VALORES\n\r");
-
-                    System.out.print("TABLERO:  ");
-                    opciones_tablero = opcionTablero.nextLine();
-
-                    System.out.print("PREMIOS [1-40]:   ");
-                    opciones_premios = opcionPremios.nextInt();
-
-                    System.out.print("PAREDES [1-20]:   ");
-                    opciones_paredes = opcionesParedes.nextInt();
-
-                    System.out.print("TRAMPAS [1-20]:   ");
-                    opciones_trampas = opcionesTrampas.nextInt();
-
-                    //Opciones para el tablero
-                    switch (opciones_tablero.toUpperCase()){
-                        case "P":
-                            nFilas = 7;
-                            nColumnas = 8;
-                            llenarTablero();
-                            break;
-
-                        case "G":
-                            nFilas = 12;
-                            nColumnas = 12;
-                            llenarTablero();
-                            break;
-                    }
-                    break;
-                case 2 :
-                    val1 = false;
-                    System.out.println("Op2");
-                    break;
-
-                case 3 : System.out.println("Hasta pronto");
-                    break;
-
-                default: System.out.println("Debe elegir un número entre 1 y 3 ");
-            }
-        }
+        menuPrincipal();
     }
 }
