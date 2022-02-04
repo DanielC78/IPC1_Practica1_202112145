@@ -1,5 +1,8 @@
 package com.practica1.daniel;
 
+import com.sun.org.apache.regexp.internal.RE;
+
+import javax.swing.*;
 import java.util.Scanner;
 import java.util.Random;
 
@@ -13,7 +16,7 @@ public class principal {
 
     //Matriz para jugadores
     private static String matrizJugadores[][] = new String[50][3];
-    private static int Pacman_x, Pacman_y;
+    private static int Pacman_x = 0, Pacman_y = 0;
 
 
     //Items del juego
@@ -40,25 +43,33 @@ public class principal {
     private static int opciones_paredes;
     private static int opciones_trampas;
 
-    //Variables para el juego
-    private static String mensajeAlerta = "¡NO PUEDES PASAR!";
-    private static int cantidadPremios;
-
     //Tablero y consola
     private static String opciones_tablero;
+    final private static String PEQ = "P";
+    final private static String GRAN = "G";
     private static String espaciado = "======";
     final private static String BORDE_SUPERIOR = "_";
     final private static String BORDE_LATERAL = "|";
+    private static String mensajeAlerta = "¡NO PUEDES PASAR!";
+    private static int cantidadPremios;
 
     //Matriz
     private static int nFilas, nColumnas;
     private static String matrizTableroP[][];
 
-    //Objetos de la clase Scanner
+    /*Objetos de la clase Scanner*/
+
+    //Obtener la posición del PACMAN
     private static Random ran = new Random();
     private static Scanner posX_Pacman = new Scanner(System.in);
     private static Scanner posY_Pacman = new Scanner(System.in);
     private static Scanner accionesJuego = new Scanner(System.in);
+
+    //Opciones del menu
+    private static Scanner getOpcionesPausa = new Scanner(System.in);
+    private static int opciones_pausa;
+
+    //Opciones para el tablero
     private static Scanner nombreJugador = new Scanner(System.in);
     private static Scanner opcionesMenu = new Scanner(System.in);
     private static Scanner opcionTablero = new Scanner(System.in);
@@ -66,20 +77,20 @@ public class principal {
     private static Scanner opcionesParedes = new Scanner(System.in);
     private static Scanner opcionesTrampas = new Scanner(System.in);
 
+
     //Metodo para estadisticas del jugador
     public static void estadisticasJugador(){
         System.out.println("Usuario: " + nombre_jugador);
         System.out.println("Punteo: " + punteo);
         System.out.println("Vidas: " + vidas);
         System.out.println("Premios restantes: " + cantidadPremios);
-
     }
 
     //Metodo para el menu principal
     public static void menuPrincipal(){
 
-        boolean val1 = true;
-        while(val1){
+        boolean VALIDACION = true;
+        while(VALIDACION){
             System.out.println(espaciado + "MENÚ DE INICIO"+espaciado +
                     "\n1. Iniciar Juego\n" +
                     "2. Historial de partidas\n" +
@@ -89,9 +100,7 @@ public class principal {
 
             switch (opciones_menu){
                 case 1 :
-                    val1 = false;
-
-                    System.out.println("Escriba tu nombre: \r");
+                    System.out.print("Escriba tu nombre: ");
                     nombre_jugador = nombreJugador.nextLine().toUpperCase();
 
                     System.out.println("Bienvenido " + nombre_jugador+ "\n");
@@ -101,17 +110,33 @@ public class principal {
                     System.out.print(espaciado +" ESPECIFICAR TABLERO"+espaciado+
                             "\nPOR FAVOR INGRESE LOS SIGUIENTES VALORES\n\r");
 
-                    System.out.print("TABLERO:  ");
-                    opciones_tablero = opcionTablero.nextLine();
+                    while(true){
+                        System.out.print("TABLERO:  ");
+                        opciones_tablero = opcionTablero.nextLine();
 
-                    System.out.print("PREMIOS [1-40]:   ");
-                    opciones_premios = opcionPremios.nextInt();
+                        if(opciones_tablero.equalsIgnoreCase(PEQ) || opciones_tablero.equalsIgnoreCase(GRAN) ){
+                            break;
+                        }
+                    }
 
-                    System.out.print("PAREDES [1-20]:   ");
-                    opciones_paredes = opcionesParedes.nextInt();
+                    while(true){
+                        System.out.print("PREMIOS [1-40]:   ");
+                        opciones_premios = opcionPremios.nextInt();
+                        if(opciones_premios > 0 && opciones_premios <= 40){break;}
 
-                    System.out.print("TRAMPAS [1-20]:   ");
-                    opciones_trampas = opcionesTrampas.nextInt();
+                    }
+
+                    while (true){
+                        System.out.print("PAREDES [1-20]:   ");
+                        opciones_paredes = opcionesParedes.nextInt();
+                        if(opciones_paredes > 0 && opciones_paredes <= 20){break;}
+                    }
+
+                    while (true){
+                        System.out.print("TRAMPAS [1-20]:   ");
+                        opciones_trampas = opcionesTrampas.nextInt();
+                        if(opciones_trampas > 0 && opciones_trampas <= 20){break;}
+                    }
 
                     //Opciones para el tablero
                     switch (opciones_tablero.toUpperCase()){
@@ -127,15 +152,18 @@ public class principal {
                             llenarTablero();
                             break;
                     }
-                    break;
-                case 2 :
-                    val1 = false;
-                    historialPartidas();
+                    VALIDACION = false;
+                        break;
+                    //Romper while
 
-                    break;
+                case 2 :
+                    VALIDACION = false;
+                    historialPartidas();
+                        break;
 
                 case 3 : System.out.println("Hasta pronto");
-                    val1 = false;
+                    VALIDACION = false;
+                    System.exit(0);
                     break;
 
                 default: System.out.println("Debe elegir un número entre 1 y 3 ");
@@ -144,8 +172,44 @@ public class principal {
     }
 
     public static void menuPausa(){
+        System.out.println(espaciado + " PAUSA " + espaciado +"\n" +
+                "POR FAVOR, SELECCIONE UNA OPCION\n" +
+                "1. REGRESAR\n" +
+                "2. TERMINAR PARTIDA\r");
+
+        opciones_pausa = getOpcionesPausa.nextInt();
+
+        while(true){
+            if(opciones_pausa > 0 &&  opciones_pausa <=2){
+                break;
+            }
+        }
+
+        switch (opciones_pausa){
+            case 1:
+                dibujarTablero();
+                movimientosPacman();
+                break;
+            case 2:
+                System.out.println("¿Está seguro de terminar la partida? (S) para SI o (N) para NO");
+                while(true){
+                    Scanner RES = new Scanner(System.in);
+                    System.out.print("Opcion: ");
+                    String r = RES.nextLine();
+
+                    if(r.equalsIgnoreCase("S")){
+                        menuPrincipal();
+                        break;
+                    } else if (r.equalsIgnoreCase("N")){
+                        menuPausa();
+                    }
+                }
+                break;
+        }
+
 
     }
+
     public static void historialPartidas(){
         System.out.println(espaciado + "HISTORIAL DE PARTIDAS" + espaciado);
         matrizJugadores[0][0] = "No.     ";
@@ -178,24 +242,38 @@ public class principal {
 
     //Metodo para movimientos
     public static void movimientosPacman(){
-        boolean val1 = true;
+
+        boolean VALIDACION_MOV = true;
 
         //Preguntar el punto de inicio
-        while(val1){
-            System.out.println("Ingrese la posición de inicio");
-            System.out.print("Fila: ");
-            Pacman_x = posX_Pacman.nextInt();
-            System.out.print("Columna: ");
-            Pacman_y = posY_Pacman.nextInt();
+        if(Pacman_x == 0 && Pacman_y == 0){
+            while(VALIDACION_MOV){
+                System.out.println("Ingrese la posición de inicio");
+                while(true){
+                    System.out.print("Fila: ");
+                    Pacman_x = posX_Pacman.nextInt();
+                    if(Pacman_x <= nFilas - 2 && Pacman_x > 0){
+                        break;
+                    } else{ System.out.println("Debe ser un numero entre 1 y " + (nFilas - 2));}
+                }
 
-            if(matrizTableroP[Pacman_x][Pacman_y] == BLANCO){
-                val1 = false;
-                matrizTableroP[Pacman_x][Pacman_y] = PACMAN_IZQ;
-                dibujarTablero();
+                while (true){
+                    System.out.print("Columna: ");
+                    Pacman_y = posY_Pacman.nextInt();
+                    if(Pacman_y <= nColumnas -2 && Pacman_y > 0){
+                        break;
+                    } else { System.out.println("Debe ser un numero entre 1 y " + (nColumnas - 2));}
+                }
 
-            } else{
-                System.out.println("La casilla ya esta llena");
-                dibujarTablero();
+                if(matrizTableroP[Pacman_x][Pacman_y] == BLANCO){
+                    matrizTableroP[Pacman_x][Pacman_y] = PACMAN_IZQ;
+                    dibujarTablero();
+                    VALIDACION_MOV = false;
+
+                } else{
+                    System.out.println("La casilla ya esta llena");
+                    dibujarTablero();
+                }
             }
 
         }
@@ -203,10 +281,6 @@ public class principal {
         String tecla;
         //Mover entre el tablero
         while((cantidadPremios > 0) && (vidas > 0)){
-            //System.out.println(cantidadPremios);
-            //System.out.println(vidas);
-
-
             System.out.print("Accion : ");
             tecla = accionesJuego.nextLine();
 
@@ -291,6 +365,7 @@ public class principal {
 
         if(cantidadPremios == 0){
             System.out.println("¡HAS GANADO!");
+            menuPrincipal();
         } else if(vidas == 0){
             System.out.println("Más suerte a la próxima :( \n" +
                     "¿Deseas volver a intentarlo?");
@@ -466,7 +541,6 @@ public class principal {
 
     //Clase principal
     public static void main(String ...args){
-
         menuPrincipal();
     }
 }
