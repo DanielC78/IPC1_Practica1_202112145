@@ -71,6 +71,7 @@ public class principal {
         System.out.println("Usuario: " + nombre_jugador);
         System.out.println("Punteo: " + punteo);
         System.out.println("Vidas: " + vidas);
+        System.out.println("Premios restantes: " + cantidadPremios);
 
     }
 
@@ -211,61 +212,73 @@ public class principal {
 
                 switch (tecla.toLowerCase()){
                     case ARRIBA:
-                        if(matrizTableroP[Pacman_x - 1][Pacman_y] != PARED){
+                        if(matrizTableroP[Pacman_x - 1][Pacman_y] == PARED){
+                            System.out.println(mensajeAlerta);
+                        } else{
                             setPunteoVidas(tecla);
                             matrizTableroP[Pacman_x][Pacman_y] = BLANCO;
-                            if(Pacman_x - 1 == 0){
+                            if(Pacman_x - 1 == 0 && matrizTableroP[nFilas - 2][Pacman_y] != PARED){
                                 Pacman_x = nFilas-1;
+                            } else if(Pacman_x - 1 == 0 && matrizTableroP[nFilas - 2][Pacman_y] == PARED){
+                                Pacman_x++;
+                                System.out.println(mensajeAlerta);
                             }
                             Pacman_x --;
                             matrizTableroP[Pacman_x][Pacman_y] = PACMAN_ARRIBA;
-                        } else{
-                            System.out.println(mensajeAlerta);
                         }
                         break;
+
                     case ABAJO:
-                        if(matrizTableroP[Pacman_x + 1][Pacman_y] != PARED){
+                        if(matrizTableroP[Pacman_x + 1][Pacman_y] == PARED){
+                            System.out.println(mensajeAlerta);
+                        }else{
                             setPunteoVidas(tecla);
                             matrizTableroP[Pacman_x][Pacman_y] = BLANCO;
-                            if(Pacman_x + 1 == nFilas-1 ){
+                            if(Pacman_x + 1 == nFilas-1 && matrizTableroP[1][Pacman_y] != PARED){
                                 Pacman_x = 0;
+                            } else if(Pacman_x + 1 == nFilas-1 && matrizTableroP[1][Pacman_y] == PARED){
+                                Pacman_x --;
+                                System.out.println(mensajeAlerta);
                             }
                             Pacman_x ++;
                             matrizTableroP[Pacman_x][Pacman_y] = PACMAN_ABAJO;
-                        }else{
-                            System.out.println(mensajeAlerta);
                         }
 
                         break;
+
                     case DERECHA:
                         if(matrizTableroP[Pacman_x][Pacman_y + 1] == PARED){
+                            System.out.println(mensajeAlerta);
+                        } else{
                             setPunteoVidas(tecla);
                             matrizTableroP[Pacman_x][Pacman_y] = BLANCO;
-                            if(Pacman_y + 1 == nColumnas - 1){
+                            if(Pacman_y + 1 == nColumnas - 1 && matrizTableroP[Pacman_x][1] != PARED ){
                                 Pacman_y = 0;
+                            } else if(Pacman_y + 1 == nColumnas - 1 && matrizTableroP[Pacman_x][1] == PARED){
+                                Pacman_y--;
+                                System.out.println(mensajeAlerta);
                             }
-
                             Pacman_y++;
                             matrizTableroP[Pacman_x][Pacman_y] = PACMAN_DER;
-                        } else{
-                            System.out.println(mensajeAlerta);
                         }
 
                         break;
 
                     case IZQUIERDA:
                         if(matrizTableroP[Pacman_x][Pacman_y - 1] == PARED){
+                            System.out.println(mensajeAlerta);
+                        } else{
                             setPunteoVidas(tecla);
                             matrizTableroP[Pacman_x][Pacman_y] = BLANCO;
-                            if(Pacman_y - 1 == 0){
+                            if((Pacman_y - 1 == 0) && (matrizTableroP[Pacman_x][nColumnas - 2] != PARED)){
                                 Pacman_y = nColumnas-1;
+                            } else if((Pacman_y - 1 == 0) && matrizTableroP[Pacman_x][nColumnas - 2] == PARED){
+                                Pacman_y++;
+                                System.out.println(mensajeAlerta);
                             }
                             Pacman_y--;
                             matrizTableroP[Pacman_x][Pacman_y] = PACMAN_IZQ;
-                        } else{
-                            System.out.println(mensajeAlerta);
                         }
-
                         break;
 
                     case PAUSA:
@@ -276,6 +289,12 @@ public class principal {
                 dibujarTablero();
         }
 
+        if(cantidadPremios == 0){
+            System.out.println("¡HAS GANADO!");
+        } else if(vidas == 0){
+            System.out.println("Más suerte a la próxima :( \n" +
+                    "¿Deseas volver a intentarlo?");
+        }
         idJugador++;
     }
 
@@ -284,8 +303,10 @@ public class principal {
             case ARRIBA:
                 if(matrizTableroP[Pacman_x - 1][Pacman_y] == PREMIO_ESPECIAL){
                     punteo += 15;
+                    cantidadPremios--;
                 } else if(matrizTableroP[Pacman_x - 1][Pacman_y] == PREMIO_SIMPLE){
                     punteo += 10;
+                    cantidadPremios--;
                 } else if(matrizTableroP[Pacman_x - 1][Pacman_y] == FANTASMA){
                     vidas--;
                 }
@@ -293,8 +314,10 @@ public class principal {
             case ABAJO:
                 if(matrizTableroP[Pacman_x + 1][Pacman_y] == PREMIO_ESPECIAL){
                     punteo += 15;
+                    cantidadPremios--;
                 } else if(matrizTableroP[Pacman_x + 1][Pacman_y] == PREMIO_SIMPLE){
                     punteo += 10;
+                    cantidadPremios--;
                 } else if(matrizTableroP[Pacman_x + 1][Pacman_y] == FANTASMA){
                     vidas--;
                 }
@@ -302,8 +325,10 @@ public class principal {
             case DERECHA:
                 if(matrizTableroP[Pacman_x][Pacman_y + 1] == PREMIO_ESPECIAL){
                     punteo += 15;
+                    cantidadPremios--;
                 } else if(matrizTableroP[Pacman_x][Pacman_y + 1] == PREMIO_SIMPLE){
                     punteo += 10;
+                    cantidadPremios--;
                 } else if( matrizTableroP[Pacman_x][Pacman_y + 1] == FANTASMA){
                     vidas--;
                 }
@@ -311,8 +336,10 @@ public class principal {
             case IZQUIERDA:
                 if(matrizTableroP[Pacman_x][Pacman_y - 1] == PREMIO_ESPECIAL){
                     punteo += 15;
+                    cantidadPremios--;
                 } else if(matrizTableroP[Pacman_x][Pacman_y - 1] == PREMIO_SIMPLE){
                     punteo += 10;
+                    cantidadPremios--;
                 } else if(matrizTableroP[Pacman_x][Pacman_y - 1] == FANTASMA){
                     vidas--;
                 }
