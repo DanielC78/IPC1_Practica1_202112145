@@ -1,9 +1,7 @@
 package com.practica1.daniel;
 
-import java.util.Locale;
 import java.util.Scanner;
 import java.util.Random;
-import java.util.concurrent.TimeoutException;
 
 public class principal {
 
@@ -15,6 +13,7 @@ public class principal {
 
     //Matriz para jugadores
     private static String matrizJugadores[][] = new String[50][3];
+    private static int Pacman_x, Pacman_y;
 
 
     //Items del juego
@@ -22,7 +21,11 @@ public class principal {
     final private static String PREMIO_SIMPLE = " 0 ";
     final private static String PREMIO_ESPECIAL = " $ ";
     final private static String PARED = " X ";
-    final private static String PACMAN = " < ";
+    final private static String PACMAN_IZQ = " < ";
+    final private static String PACMAN_DER = " > ";
+    final private static String PACMAN_ARRIBA = " ^ ";
+    final private static String PACMAN_ABAJO = " v ";
+    final private static String BLANCO = "   ";
 
     //Teclas de movimiento
     final private static String ARRIBA = "8";
@@ -37,16 +40,23 @@ public class principal {
     private static int opciones_paredes;
     private static int opciones_trampas;
 
+    //Contadores de premios
+    private static int cantidadPremios;
+
     //Tablero y consola
     private static String opciones_tablero;
     private static String espaciado = "======";
+    final private static String BORDE_SUPERIOR = "_";
+    final private static String BORDE_LATERAL = "|";
 
     //Matriz
     private static int nFilas, nColumnas;
     private static String matrizTableroP[][];
 
-    //Variables de la clase Scanner
+    //Objetos de la clase Scanner
     private static Random ran = new Random();
+    private static Scanner posX_Pacman = new Scanner(System.in);
+    private static Scanner posY_Pacman = new Scanner(System.in);
     private static Scanner accionesJuego = new Scanner(System.in);
     private static Scanner nombreJugador = new Scanner(System.in);
     private static Scanner opcionesMenu = new Scanner(System.in);
@@ -80,9 +90,9 @@ public class principal {
                     val1 = false;
 
                     System.out.println("Escriba tu nombre: \r");
-                    nombre_jugador = nombreJugador.nextLine();
+                    nombre_jugador = nombreJugador.nextLine().toUpperCase();
 
-                    System.out.println("Bienvenido " + nombre_jugador + "\n");
+                    System.out.println("Bienvenido " + nombre_jugador+ "\n");
                     matrizJugadores[idJugador][0] = nombre_jugador;
                     idJugador++;
 
@@ -123,6 +133,7 @@ public class principal {
                     break;
 
                 case 3 : System.out.println("Hasta pronto");
+                    val1 = false;
                     break;
 
                 default: System.out.println("Debe elegir un número entre 1 y 3 ");
@@ -130,6 +141,9 @@ public class principal {
         }
     }
 
+    public static void menuPausa(){
+
+    }
     public static void historialPartidas(){
         System.out.println(espaciado + "HISTORIAL DE PARTIDAS" + espaciado);
         matrizJugadores[0][0] = "No.     ";
@@ -159,32 +173,88 @@ public class principal {
         }
 
     }
+
     //Metodo para movimientos
     public static void movimientosPacman(){
+        boolean val1 = true;
 
-        boolean val = true;
-        while(val){
-            String tecla;
+        //Preguntar el punto de inicio
+        while(val1){
+            System.out.println("Ingrese la posición de inicio");
+            System.out.print("Fila: ");
+            Pacman_x = posX_Pacman.nextInt();
+            System.out.print("Columna: ");
+            Pacman_y = posY_Pacman.nextInt();
+
+            if(matrizTableroP[Pacman_x][Pacman_y] == BLANCO){
+                val1 = false;
+                matrizTableroP[Pacman_x][Pacman_y] = PACMAN_IZQ;
+                dibujarTablero();
+
+            } else{
+                System.out.println("La casilla ya esta llena");
+                dibujarTablero();
+            }
+
+        }
+
+        String tecla;
+        //Mover entre el tablero
+        while((cantidadPremios > 0) && (vidas > 0)){
+            //System.out.println(cantidadPremios);
+            //System.out.println(vidas);
+
             System.out.print("Accion : ");
             tecla = accionesJuego.nextLine();
 
-            if( tecla == ARRIBA || tecla == ABAJO || tecla == DERECHA || tecla == IZQUIERDA || tecla.toLowerCase() == PAUSA){
-                val = false;
-                switch (tecla){
+                switch (tecla.toLowerCase()){
                     case ARRIBA:
+                        matrizTableroP[Pacman_x][Pacman_y] = BLANCO;
+                        if(Pacman_x-1 == 0){
+                            Pacman_x = nFilas-1;
+                        }
+
+                        Pacman_x --;
+                        matrizTableroP[Pacman_x][Pacman_y] = PACMAN_ARRIBA;
                         break;
+
                     case ABAJO:
+                        matrizTableroP[Pacman_x][Pacman_y] = BLANCO;
+                        if(Pacman_x+1 == nFilas-1 ){
+                            Pacman_x = 0;
+                        }
+
+                        Pacman_x ++;
+                        matrizTableroP[Pacman_x][Pacman_y] = PACMAN_ABAJO;
+
                         break;
                     case DERECHA:
+                        matrizTableroP[Pacman_x][Pacman_y] = BLANCO;
+                        Pacman_y++;
+                        matrizTableroP[Pacman_x][Pacman_y] = PACMAN_DER;
                         break;
                     case IZQUIERDA:
+                        matrizTableroP[Pacman_x][Pacman_y] = BLANCO;
+                        Pacman_x--;
+                        matrizTableroP[Pacman_x][Pacman_y] = PACMAN_IZQ;
                         break;
+                    case PAUSA:
+                        menuPausa();
+                        break;
+                    default: System.out.println("Debe de ingresar una tecla válida");
                 }
-
-
-            }
+                dibujarTablero();
         }
 
+    }
+
+    public static void perdidaPuntos(){
+
+    }
+
+    public static int calcularPremios(){
+       cantidadPremios = (int)Math.round((nFilas * nColumnas)*(opciones_premios/100.0));
+       return cantidadPremios;
     }
 
     //Metodo para dibujar el tablero
@@ -193,25 +263,25 @@ public class principal {
 
         //Crear el margen
         for(int i = 0 ; i < nFilas; i++){
-            matrizTableroP[i][0]="|";
-            matrizTableroP[i][nColumnas-1]="|";
+            matrizTableroP[i][0]= BORDE_LATERAL;
+            matrizTableroP[i][nColumnas-1]=BORDE_LATERAL;
         }
 
         for(int j = 0 ; j < nColumnas; j++){
-           if(nColumnas == 12){
-               matrizTableroP[0][j]="__";
-               matrizTableroP[nFilas-1][j]="__";
-           } else{
-               matrizTableroP[0][j]="--";
-               matrizTableroP[nFilas-1][j]="--";
-           }
+            if(j == 0 || j == nColumnas-1){
+                matrizTableroP[0][j]= BORDE_SUPERIOR;
+                matrizTableroP[nFilas-1][j]= BORDE_SUPERIOR;
+            } else{
+                matrizTableroP[0][j]= " "+BORDE_SUPERIOR+" ";
+                matrizTableroP[nFilas-1][j]=" "+BORDE_SUPERIOR+" ";
+            }
         }
 
         //Rellenar con Premios
 
-        int porcentajePremios = (int)Math.round((nFilas * nColumnas)*(opciones_premios/100.0));
+        int llenadoPremios  = calcularPremios();
 
-        while(porcentajePremios > 0){
+        while(llenadoPremios > 0){
             int numeroRan_x = (int)(ran.nextDouble()*nFilas);
             int numeroRan_y = (int)(ran.nextDouble()*nColumnas);
             int numeroRan_P = (int) (ran.nextDouble()*1);
@@ -235,7 +305,7 @@ public class principal {
                 }
             }
 
-            porcentajePremios--;
+            llenadoPremios--;
         }
 
         //Llenar con Paredes
@@ -257,7 +327,6 @@ public class principal {
 
             porcentajeParedes--;
         }
-
 
         //Llenar con fantasmas
         int porcentajeFantasmas = (int)Math.round((nFilas * nColumnas)*(opciones_trampas/100.0));
@@ -283,15 +352,12 @@ public class principal {
         for(int i = 0; i < nFilas ; i++){
             for (int j = 0; j < nColumnas; j++){
                 if(matrizTableroP[i][j] == null){
-                    matrizTableroP[i][j] = "   ";
+                    matrizTableroP[i][j] = BLANCO;
                 }
             }
         }
-
         dibujarTablero();
-        estadisticasJugador();
         movimientosPacman();
-
     }
 
     public static void dibujarTablero(){
@@ -302,12 +368,10 @@ public class principal {
             }
             System.out.println();
         }
+        estadisticasJugador();
 
     }
 
-    public static void validacionMovimientos(){
-
-    }
     //Clase principal
     public static void main(String ...args){
 
