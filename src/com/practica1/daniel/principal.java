@@ -9,7 +9,6 @@ import java.util.Random;
 public class principal {
 
     //Datos del jugador
-    private static int idJugador = 1;
     private static String nombre_jugador;
     private static int vidas = 3;
     private static int punteo = 0;
@@ -83,7 +82,6 @@ public class principal {
         System.out.println("Usuario: " + nombre_jugador);
         System.out.println("Punteo: " + punteo);
         System.out.println("Vidas: " + vidas);
-        System.out.println("Premios restantes: " + cantidadPremios);
     }
 
     //Metodo para el menu principal
@@ -104,8 +102,6 @@ public class principal {
                     nombre_jugador = nombreJugador.nextLine().toUpperCase();
 
                     System.out.println("Bienvenido " + nombre_jugador+ "\n");
-                    matrizJugadores[idJugador][0] = nombre_jugador;
-                    idJugador++;
 
                     System.out.print(espaciado +" ESPECIFICAR TABLERO"+espaciado+
                             "\nPOR FAVOR INGRESE LOS SIGUIENTES VALORES\n\r");
@@ -198,6 +194,8 @@ public class principal {
                     String r = RES.nextLine();
 
                     if(r.equalsIgnoreCase("S")){
+                        desplazarJugadores();
+                        vaciarDatos();
                         menuPrincipal();
                         break;
                     } else if (r.equalsIgnoreCase("N")){
@@ -209,23 +207,39 @@ public class principal {
 
 
     }
+    public static void desplazarJugadores(){
+        for(int i = 48; i >= 0; i--){
+            for (int j = 1 ; j < matrizJugadores[i].length; j++){
+                    if(matrizJugadores[i][j] != null){
+                        matrizJugadores[i+1][j] = matrizJugadores[i][j];
+                    }
+            }
+        }
+        matrizJugadores[0][1] = nombre_jugador;
+        matrizJugadores[0][2] = String.valueOf(punteo);
 
+
+    }
+
+    public static void vaciarDatos(){
+        punteo = 0;
+        vidas = 3;
+        Pacman_y = 0;
+        Pacman_x = 0;
+    }
     public static void historialPartidas(){
-        System.out.println(espaciado + "HISTORIAL DE PARTIDAS" + espaciado);
-        matrizJugadores[0][0] = "No.     ";
-        matrizJugadores[0][1] = "USUARIO       ";
-        matrizJugadores[0][2] = "PUNTEO";
+        System.out.println(espaciado + "HISTORIAL DE PARTIDAS" + espaciado +"\n" +
+                "No.     " + "USUARIO       " + " PUNTEO");
 
-
-        if(matrizJugadores[1][0] != null){
+        if(matrizJugadores[0][1] == null){
+            System.out.println("Aun no hay ninguna partida\n");
+            menuPrincipal();
+        } else {
             for (int i = 0 ; i < matrizJugadores.length; i++ ){
                 for ( int j = 0 ; j < matrizJugadores[i].length; j++){
-                    if(matrizJugadores[i][j] != null){
-                        if(i == 0){
-                            System.out.print(matrizJugadores[i][j]);
-                        }else {
-                            System.out.print(matrizJugadores[i][j] + "      ");
-                        }
+                    if(matrizJugadores[i][1] != null){
+                        matrizJugadores[i][0] = String.valueOf(i+1);
+                        System.out.print(matrizJugadores[i][j] + "      ");
                         if( j == 2){
                             System.out.println();
                         }
@@ -233,12 +247,17 @@ public class principal {
                     }
                 }
             }
-        } else{
-            System.out.println("Aun no hay ninguna partida\n");
-            menuPrincipal();
         }
+        System.out.println("Enter para regresar al menú");
+        Scanner entrada = new Scanner(System.in);
+        System.out.println();
+        String en = entrada.nextLine();
+        menuPrincipal();
+
 
     }
+
+
 
     //Metodo para movimientos
     public static void movimientosPacman(){
@@ -365,12 +384,14 @@ public class principal {
 
         if(cantidadPremios == 0){
             System.out.println("¡HAS GANADO!");
-            menuPrincipal();
         } else if(vidas == 0){
-            System.out.println("Más suerte a la próxima :( \n" +
-                    "¿Deseas volver a intentarlo?");
+            System.out.println("Más suerte a la próxima :( \n");
         }
-        idJugador++;
+
+        desplazarJugadores();
+        vaciarDatos();
+        menuPrincipal();
+
     }
 
     public static void setPunteoVidas(String _tecla){
@@ -420,7 +441,6 @@ public class principal {
                 }
                 break;
         }
-        matrizJugadores[idJugador][2] = String.valueOf(punteo);
     }
 
     public static int calcularPremios(){
