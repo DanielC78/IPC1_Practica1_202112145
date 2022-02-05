@@ -1,8 +1,5 @@
 package com.practica1.daniel;
 
-import com.sun.org.apache.regexp.internal.RE;
-
-import javax.swing.*;
 import java.util.Scanner;
 import java.util.Random;
 
@@ -82,6 +79,7 @@ public class principal {
         System.out.println("Usuario: " + nombre_jugador);
         System.out.println("Punteo: " + punteo);
         System.out.println("Vidas: " + vidas);
+        System.out.println("Premios: " + cantidadPremios);
     }
 
     //Metodo para el menu principal
@@ -224,6 +222,7 @@ public class principal {
     public static void vaciarDatos(){
         punteo = 0;
         vidas = 3;
+        cantidadPremios = 0;
         Pacman_y = 0;
         Pacman_x = 0;
     }
@@ -253,11 +252,7 @@ public class principal {
         System.out.println();
         String en = entrada.nextLine();
         menuPrincipal();
-
-
     }
-
-
 
     //Metodo para movimientos
     public static void movimientosPacman(){
@@ -294,15 +289,14 @@ public class principal {
                     dibujarTablero();
                 }
             }
-
         }
 
         String tecla;
+
         //Mover entre el tablero
         while((cantidadPremios > 0) && (vidas > 0)){
             System.out.print("Accion : ");
             tecla = accionesJuego.nextLine();
-
                 switch (tecla.toLowerCase()){
                     case ARRIBA:
                         if(matrizTableroP[Pacman_x - 1][Pacman_y] == PARED){
@@ -397,10 +391,10 @@ public class principal {
     public static void setPunteoVidas(String _tecla){
         switch (_tecla){
             case ARRIBA:
-                if(matrizTableroP[Pacman_x - 1][Pacman_y] == PREMIO_ESPECIAL){
+                if(matrizTableroP[Pacman_x - 1][Pacman_y] == PREMIO_ESPECIAL || matrizTableroP[nFilas - 2][Pacman_y] == PREMIO_ESPECIAL){
                     punteo += 15;
                     cantidadPremios--;
-                } else if(matrizTableroP[Pacman_x - 1][Pacman_y] == PREMIO_SIMPLE){
+                } else if(matrizTableroP[Pacman_x - 1][Pacman_y] == PREMIO_SIMPLE || matrizTableroP[nFilas - 2][Pacman_y] == PREMIO_SIMPLE){
                     punteo += 10;
                     cantidadPremios--;
                 } else if(matrizTableroP[Pacman_x - 1][Pacman_y] == FANTASMA){
@@ -408,10 +402,10 @@ public class principal {
                 }
                 break;
             case ABAJO:
-                if(matrizTableroP[Pacman_x + 1][Pacman_y] == PREMIO_ESPECIAL){
+                if(matrizTableroP[Pacman_x + 1][Pacman_y] == PREMIO_ESPECIAL || matrizTableroP[1][Pacman_y] == PREMIO_ESPECIAL){
                     punteo += 15;
                     cantidadPremios--;
-                } else if(matrizTableroP[Pacman_x + 1][Pacman_y] == PREMIO_SIMPLE){
+                } else if(matrizTableroP[Pacman_x + 1][Pacman_y] == PREMIO_SIMPLE || matrizTableroP[1][Pacman_y] == PREMIO_ESPECIAL){
                     punteo += 10;
                     cantidadPremios--;
                 } else if(matrizTableroP[Pacman_x + 1][Pacman_y] == FANTASMA){
@@ -419,10 +413,10 @@ public class principal {
                 }
                 break;
             case DERECHA:
-                if(matrizTableroP[Pacman_x][Pacman_y + 1] == PREMIO_ESPECIAL){
+                if(matrizTableroP[Pacman_x][Pacman_y + 1] == PREMIO_ESPECIAL || matrizTableroP[Pacman_x][1] == PREMIO_ESPECIAL){
                     punteo += 15;
                     cantidadPremios--;
-                } else if(matrizTableroP[Pacman_x][Pacman_y + 1] == PREMIO_SIMPLE){
+                } else if(matrizTableroP[Pacman_x][Pacman_y + 1] == PREMIO_SIMPLE || matrizTableroP[Pacman_x][1] == PREMIO_SIMPLE){
                     punteo += 10;
                     cantidadPremios--;
                 } else if( matrizTableroP[Pacman_x][Pacman_y + 1] == FANTASMA){
@@ -430,10 +424,10 @@ public class principal {
                 }
                 break;
             case IZQUIERDA:
-                if(matrizTableroP[Pacman_x][Pacman_y - 1] == PREMIO_ESPECIAL){
+                if(matrizTableroP[Pacman_x][Pacman_y - 1] == PREMIO_ESPECIAL || matrizTableroP[Pacman_x][nColumnas - 2] == PREMIO_ESPECIAL){
                     punteo += 15;
                     cantidadPremios--;
-                } else if(matrizTableroP[Pacman_x][Pacman_y - 1] == PREMIO_SIMPLE){
+                } else if(matrizTableroP[Pacman_x][Pacman_y - 1] == PREMIO_SIMPLE || matrizTableroP[Pacman_x][nColumnas - 2] == PREMIO_SIMPLE){
                     punteo += 10;
                     cantidadPremios--;
                 } else if(matrizTableroP[Pacman_x][Pacman_y - 1] == FANTASMA){
@@ -556,9 +550,7 @@ public class principal {
             System.out.println();
         }
         estadisticasJugador();
-
     }
-
     //Clase principal
     public static void main(String ...args){
         menuPrincipal();
