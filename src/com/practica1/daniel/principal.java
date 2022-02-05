@@ -1,5 +1,7 @@
 package com.practica1.daniel;
 
+import sun.lwawt.macosx.CSystemTray;
+
 import java.util.Scanner;
 import java.util.Random;
 
@@ -33,11 +35,17 @@ public class principal {
     final private static String IZQUIERDA = "4";
     final private static String PAUSA = "f";
 
-    //Variables para Scanner
+    //Variables para Scanner tipo entero
     private static int opciones_menu;
     private static int opciones_premios;
     private static int opciones_paredes;
     private static int opciones_trampas;
+
+    //Variables para Scanner tipo String
+    private static String S_menu ;
+    private static String S_premio;
+    private static String S_paredes;
+    private static String S_trampas;
 
     //Tablero y consola
     private static String opciones_tablero;
@@ -73,16 +81,27 @@ public class principal {
     private static Scanner opcionesParedes = new Scanner(System.in);
     private static Scanner opcionesTrampas = new Scanner(System.in);
 
-
-    //Metodo para estadisticas del jugador
     public static void estadisticasJugador(){
         System.out.println("Usuario: " + nombre_jugador);
         System.out.println("Punteo: " + punteo);
         System.out.println("Vidas: " + vidas);
         System.out.println("Premios: " + cantidadPremios);
     }
+    private static void tableroOpciones(String _tecla){
+        switch (_tecla.toUpperCase()){
+            case "P":
+                nFilas = 7;
+                nColumnas = 8;
+                llenarTablero();
+                break;
 
-    //Metodo para el menu principal
+            case "G":
+                nFilas = 12;
+                nColumnas = 12;
+                llenarTablero();
+                break;
+        }
+    }
     public static void menuPrincipal(){
 
         boolean VALIDACION = true;
@@ -92,79 +111,82 @@ public class principal {
                     "2. Historial de partidas\n" +
                     "3. Salir\r");
 
-            opciones_menu = opcionesMenu.nextInt();
+            S_menu = opcionesMenu.nextLine();
+            if(S_menu.matches("[1-9]")){
+                opciones_menu = Integer.valueOf(S_menu);
+                switch (opciones_menu){
+                    case 1 :
+                        VALIDACION = false;
+                       while(true){
+                           System.out.print("Escriba tu nombre: ");
+                           nombre_jugador = nombreJugador.nextLine().toUpperCase();
 
-            switch (opciones_menu){
-                case 1 :
-                    System.out.print("Escriba tu nombre: ");
-                    nombre_jugador = nombreJugador.nextLine().toUpperCase();
+                           if(nombre_jugador.matches("[A-Za-z]")){
+                               System.out.print("Escriba tu nombre: ");
+                               nombre_jugador = nombreJugador.nextLine().toUpperCase();
+                               System.out.println("Bienvenido " + nombre_jugador+ "\n");
+                               break;
+                           }
+                       }
 
-                    System.out.println("Bienvenido " + nombre_jugador+ "\n");
+                        System.out.print(espaciado +" ESPECIFICAR TABLERO"+espaciado+
+                                "\nPOR FAVOR INGRESE LOS SIGUIENTES VALORES\n\r");
 
-                    System.out.print(espaciado +" ESPECIFICAR TABLERO"+espaciado+
-                            "\nPOR FAVOR INGRESE LOS SIGUIENTES VALORES\n\r");
+                        while(true){
+                            System.out.print("TABLERO:  ");
+                            opciones_tablero = opcionTablero.nextLine();
 
-                    while(true){
-                        System.out.print("TABLERO:  ");
-                        opciones_tablero = opcionTablero.nextLine();
 
-                        if(opciones_tablero.equalsIgnoreCase(PEQ) || opciones_tablero.equalsIgnoreCase(GRAN) ){
-                            break;
+                            if(opciones_tablero.equalsIgnoreCase(PEQ) || opciones_tablero.equalsIgnoreCase(GRAN) ){
+                                break;
+                            }
                         }
-                    }
 
-                    while(true){
-                        System.out.print("PREMIOS [1-40]:   ");
-                        opciones_premios = opcionPremios.nextInt();
-                        if(opciones_premios > 0 && opciones_premios <= 40){break;}
+                        while(true){
+                            System.out.print("PREMIOS [1-40]:   ");
+                            S_premio = opcionPremios.nextLine();
+                            if(S_premio.matches("[1-9]")){
+                                opciones_premios = Integer.valueOf(S_premio);
+                                if(opciones_premios > 0 && opciones_premios <= 40){ break;}
+                            }
+                        }
 
-                    }
+                        while (true){
+                            System.out.print("PAREDES [1-20]:   ");
+                            S_paredes = opcionesParedes.nextLine();
+                            if(S_paredes.matches("[1-9]")){
+                                opciones_paredes = Integer.valueOf(S_paredes);
+                                if(opciones_paredes > 0 && opciones_paredes <= 20){break;}
+                            }
+                        }
 
-                    while (true){
-                        System.out.print("PAREDES [1-20]:   ");
-                        opciones_paredes = opcionesParedes.nextInt();
-                        if(opciones_paredes > 0 && opciones_paredes <= 20){break;}
-                    }
+                        while (true){
+                            System.out.print("TRAMPAS [1-20]:   ");
+                            S_trampas = opcionesTrampas.nextLine();
 
-                    while (true){
-                        System.out.print("TRAMPAS [1-20]:   ");
-                        opciones_trampas = opcionesTrampas.nextInt();
-                        if(opciones_trampas > 0 && opciones_trampas <= 20){break;}
-                    }
-
-                    //Opciones para el tablero
-                    switch (opciones_tablero.toUpperCase()){
-                        case "P":
-                            nFilas = 7;
-                            nColumnas = 8;
-                            llenarTablero();
-                            break;
-
-                        case "G":
-                            nFilas = 12;
-                            nColumnas = 12;
-                            llenarTablero();
-                            break;
-                    }
-                    VALIDACION = false;
-                        break;
-                    //Romper while
-
-                case 2 :
-                    VALIDACION = false;
-                    historialPartidas();
+                            if(S_trampas.matches("[1-9]")){
+                                opciones_trampas = Integer.valueOf(S_trampas);
+                                if(opciones_trampas > 0 && opciones_trampas <= 20){break;}
+                            }
+                        }
+                        tableroOpciones(opciones_tablero);
                         break;
 
-                case 3 : System.out.println("Hasta pronto");
-                    VALIDACION = false;
-                    System.exit(0);
-                    break;
+                    case 2 :
+                        VALIDACION = false;
+                        historialPartidas();
+                        break;
 
-                default: System.out.println("Debe elegir un número entre 1 y 3 ");
+                    case 3 : System.out.println("Hasta pronto");
+                        VALIDACION = false;
+                        System.exit(0);
+                        break;
+
+                    default: System.out.println("Debe elegir un número entre 1 y 3 ");
+                }
             }
         }
     }
-
     public static void menuPausa(){
         System.out.println(espaciado + " PAUSA " + espaciado +"\n" +
                 "POR FAVOR, SELECCIONE UNA OPCION\n" +
@@ -218,7 +240,6 @@ public class principal {
 
 
     }
-
     public static void vaciarDatos(){
         punteo = 0;
         vidas = 3;
@@ -253,8 +274,6 @@ public class principal {
         String en = entrada.nextLine();
         menuPrincipal();
     }
-
-    //Metodo para movimientos
     public static void movimientosPacman(){
 
         boolean VALIDACION_MOV = true;
@@ -387,7 +406,6 @@ public class principal {
         menuPrincipal();
 
     }
-
     public static void setPunteoVidas(String _tecla){
         switch (_tecla){
             case ARRIBA:
@@ -436,18 +454,16 @@ public class principal {
                 break;
         }
     }
-
     public static int calcularPremios(){
-       cantidadPremios = (int)Math.round((nFilas * nColumnas)*(opciones_premios/100.0));
+       cantidadPremios = (int)Math.round(((nFilas-2) * (nColumnas-2))*(opciones_premios/100.0));
        return cantidadPremios;
     }
-
-    //Metodo para dibujar el tablero
     public static void llenarTablero(){
         matrizTableroP = new String[nFilas][nColumnas];
 
         //Crear el margen
         for(int i = 0 ; i < nFilas; i++){
+
             matrizTableroP[i][0]= BORDE_LATERAL;
             matrizTableroP[i][nColumnas-1]=BORDE_LATERAL;
         }
@@ -467,8 +483,8 @@ public class principal {
         int llenadoPremios  = calcularPremios();
 
         while(llenadoPremios > 0){
-            int numeroRan_x = (int)(ran.nextDouble()*nFilas);
-            int numeroRan_y = (int)(ran.nextDouble()*nColumnas);
+            int numeroRan_x = (int)(ran.nextDouble()*(nFilas-2));
+            int numeroRan_y = (int)(ran.nextDouble()*(nColumnas-2));
             int numeroRan_P = (int) (ran.nextDouble()*2);
 
             for (int i = 0; i < nFilas; i++){
@@ -492,9 +508,10 @@ public class principal {
         }
 
         //Llenar con Paredes
-        int porcentajeParedes = (int)Math.round((nFilas * nColumnas)*(opciones_paredes/100.0));
+        int porcentajeParedes = (int)Math.round(((nFilas-2) * (nColumnas-2))*(opciones_paredes/100.0));
 
         while(porcentajeParedes > 0){
+
             int numeroRan_x = (int)(ran.nextDouble()*nFilas);
             int numeroRan_y = (int)(ran.nextDouble()*nColumnas);
 
@@ -502,7 +519,6 @@ public class principal {
                 for(int j = 0; j < nColumnas; j++){
 
                     if( matrizTableroP[numeroRan_x][numeroRan_y] == null && matrizTableroP[numeroRan_x][numeroRan_y] != "|" && matrizTableroP[numeroRan_x][numeroRan_y] != "_" && matrizTableroP[numeroRan_x][numeroRan_y] != PREMIO_ESPECIAL && matrizTableroP[numeroRan_x][numeroRan_y] != PREMIO_SIMPLE){
-
                         matrizTableroP[numeroRan_x][numeroRan_y] = PARED;
                         porcentajeParedes--;
                     }
@@ -511,19 +527,17 @@ public class principal {
         }
 
         //Llenar con fantasmas
-        int porcentajeFantasmas = (int)Math.round((nFilas * nColumnas)*(opciones_trampas/100.0));
-
-        while(porcentajeFantasmas > 0){
+        int porcentajeFantasmas = (int)Math.round(((nFilas-2) * (nColumnas-2))*(opciones_trampas/100.0));
+        System.out.println(porcentajeFantasmas);
+        for(int f = 0 ; f < porcentajeFantasmas; f++){
             int numeroRan_x = (int)(ran.nextDouble()*nFilas);
             int numeroRan_y = (int)(ran.nextDouble()*nColumnas);
 
             for (int i = 0; i < nFilas; i++){
                 for(int j = 0; j < nColumnas; j++){
-
-                    if( matrizTableroP[numeroRan_x][numeroRan_y] == null && matrizTableroP[numeroRan_x][numeroRan_y] != "|" && matrizTableroP[numeroRan_x][numeroRan_y] != "_" && matrizTableroP[numeroRan_x][numeroRan_y] != PREMIO_ESPECIAL && matrizTableroP[numeroRan_x][numeroRan_y] != PREMIO_SIMPLE && matrizTableroP[numeroRan_x][numeroRan_y] != PARED){
-
+                    if(matrizTableroP[numeroRan_x][numeroRan_y] == null && matrizTableroP[numeroRan_x][numeroRan_y] != "|" && matrizTableroP[numeroRan_x][numeroRan_y] != "_" && matrizTableroP[numeroRan_x][numeroRan_y] != PREMIO_ESPECIAL && matrizTableroP[numeroRan_x][numeroRan_y] != PREMIO_SIMPLE && matrizTableroP[numeroRan_x][numeroRan_y] != PARED){
                         matrizTableroP[numeroRan_x][numeroRan_y] = FANTASMA;
-                        porcentajeFantasmas--;
+
                     }
                 }
             }
@@ -540,9 +554,7 @@ public class principal {
         dibujarTablero();
         movimientosPacman();
     }
-
     public static void dibujarTablero(){
-
         for (int i=0; i < nFilas ; i++){
             for (int j=0; j<nColumnas ; j++){
                 System.out.print(matrizTableroP[i][j]);
@@ -551,7 +563,6 @@ public class principal {
         }
         estadisticasJugador();
     }
-    //Clase principal
     public static void main(String ...args){
         menuPrincipal();
     }
