@@ -5,7 +5,7 @@
 
 ### Fue desarollado en `Java 1.8.0` y `Java Runtime Environment 1.8.0`
 
-### El archivo .jar se encuentra [aquí](https://github.com/DanielC78/IPC1_Practica1_202112145/blob/master/src/com/practica1/daniel/principal.java)
+### El archivo .jar se encuentra [aquí](https://github.com/DanielC78/IPC1_Practica1_202112145/tree/master/out/artifacts/IPC1_PRACTICA1_202112145_jar)
 
 ### Realizado por:
 - **Nombre:** Daniel Estuardo Cuque Ruíz
