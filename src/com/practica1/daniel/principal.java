@@ -83,7 +83,7 @@ public class principal {
         System.out.println("Usuario: " + nombre_jugador);
         System.out.println("Punteo: " + punteo);
         System.out.println("Vidas: " + vidas);
-        System.out.println("Premios: " + cantidadPremios);
+        System.out.println("Premios restantes: " + cantidadPremios);
     }
     private static void tableroOpciones(String _tecla){
         switch (_tecla.toUpperCase()){
@@ -117,7 +117,7 @@ public class principal {
                         VALIDACION = false;
                         while(true){
                             System.out.print("Escriba tu nombre: ");
-                            nombre_jugador = nombreJugador.nextLine();
+                            nombre_jugador = nombreJugador.nextLine().toUpperCase();
                             if(nombre_jugador.matches("^[A-Za-z ]*$")){
                                 System.out.println("Bienvenido " + nombre_jugador.toUpperCase()+ "\n");
                                 break;
@@ -433,10 +433,11 @@ public class principal {
 
         if(cantidadPremios == 0){
             System.out.println("¡HAS GANADO!");
+            System.out.println();
         } else if(vidas == 0){
             System.out.println("Más suerte a la próxima :( \n");
         }
-
+        System.out.println();
         desplazarJugadores();
         vaciarDatos();
         menuPrincipal();
