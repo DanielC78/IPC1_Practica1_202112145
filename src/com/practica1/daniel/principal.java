@@ -1,7 +1,5 @@
 package com.practica1.daniel;
 
-import sun.lwawt.macosx.CSystemTray;
-
 import java.util.Scanner;
 import java.util.Random;
 
@@ -112,22 +110,19 @@ public class principal {
                     "3. Salir\r");
 
             S_menu = opcionesMenu.nextLine();
-            if(S_menu.matches("[1-9]")){
+            if(S_menu.matches("^[1-9]+$")){
                 opciones_menu = Integer.valueOf(S_menu);
                 switch (opciones_menu){
                     case 1 :
                         VALIDACION = false;
-                       while(true){
-                           System.out.print("Escriba tu nombre: ");
-                           nombre_jugador = nombreJugador.nextLine().toUpperCase();
-
-                           if(nombre_jugador.matches("[A-Za-z]")){
-                               System.out.print("Escriba tu nombre: ");
-                               nombre_jugador = nombreJugador.nextLine().toUpperCase();
-                               System.out.println("Bienvenido " + nombre_jugador+ "\n");
-                               break;
-                           }
-                       }
+                        while(true){
+                            System.out.print("Escriba tu nombre: ");
+                            nombre_jugador = nombreJugador.nextLine();
+                            if(nombre_jugador.matches("^[A-Za-z ]*$")){
+                                System.out.println("Bienvenido " + nombre_jugador.toUpperCase()+ "\n");
+                                break;
+                            }
+                        }
 
                         System.out.print(espaciado +" ESPECIFICAR TABLERO"+espaciado+
                                 "\nPOR FAVOR INGRESE LOS SIGUIENTES VALORES\n\r");
@@ -135,8 +130,6 @@ public class principal {
                         while(true){
                             System.out.print("TABLERO:  ");
                             opciones_tablero = opcionTablero.nextLine();
-
-
                             if(opciones_tablero.equalsIgnoreCase(PEQ) || opciones_tablero.equalsIgnoreCase(GRAN) ){
                                 break;
                             }
@@ -145,16 +138,16 @@ public class principal {
                         while(true){
                             System.out.print("PREMIOS [1-40]:   ");
                             S_premio = opcionPremios.nextLine();
-                            if(S_premio.matches("[1-9]")){
+                            if(S_premio.matches("^[0-9]+$")){
                                 opciones_premios = Integer.valueOf(S_premio);
-                                if(opciones_premios > 0 && opciones_premios <= 40){ break;}
+                                if(opciones_premios <= 40 && opciones_premios > 0){ break;}
                             }
                         }
 
                         while (true){
                             System.out.print("PAREDES [1-20]:   ");
                             S_paredes = opcionesParedes.nextLine();
-                            if(S_paredes.matches("[1-9]")){
+                            if(S_paredes.matches("^[0-9]+$") ){
                                 opciones_paredes = Integer.valueOf(S_paredes);
                                 if(opciones_paredes > 0 && opciones_paredes <= 20){break;}
                             }
@@ -163,8 +156,7 @@ public class principal {
                         while (true){
                             System.out.print("TRAMPAS [1-20]:   ");
                             S_trampas = opcionesTrampas.nextLine();
-
-                            if(S_trampas.matches("[1-9]")){
+                            if(S_trampas.matches("^[0-9]+$")){
                                 opciones_trampas = Integer.valueOf(S_trampas);
                                 if(opciones_trampas > 0 && opciones_trampas <= 20){break;}
                             }
@@ -284,18 +276,25 @@ public class principal {
                 System.out.println("Ingrese la posición de inicio");
                 while(true){
                     System.out.print("Fila: ");
-                    Pacman_x = posX_Pacman.nextInt();
-                    if(Pacman_x <= nFilas - 2 && Pacman_x > 0){
-                        break;
-                    } else{ System.out.println("Debe ser un numero entre 1 y " + (nFilas - 2));}
+                    String S_Pacman_x = posX_Pacman.nextLine();
+                    if(S_Pacman_x.matches("^[0-9]+$")){
+                        Pacman_x = Integer.valueOf(S_Pacman_x);
+                        if(Pacman_x > 0 && Pacman_x <= nFilas - 2){
+                            break;
+                        } else{ System.out.println("Debe ser un numero entre 1 y " + (nFilas - 2));}
+                    }
                 }
 
                 while (true){
                     System.out.print("Columna: ");
-                    Pacman_y = posY_Pacman.nextInt();
-                    if(Pacman_y <= nColumnas -2 && Pacman_y > 0){
-                        break;
-                    } else { System.out.println("Debe ser un numero entre 1 y " + (nColumnas - 2));}
+                    String S_Pacman_y = posY_Pacman.nextLine();
+                    if(S_Pacman_y.matches("^[0-9]+$")){
+                        Pacman_y = Integer.valueOf(S_Pacman_y);
+                        if(Pacman_y > 0 && Pacman_y <= nColumnas -2){
+                            break;
+                        } else { System.out.println("Debe ser un numero entre 1 y " + (nColumnas - 2));}
+                    }
+
                 }
 
                 if(matrizTableroP[Pacman_x][Pacman_y] == BLANCO){
@@ -310,12 +309,13 @@ public class principal {
             }
         }
 
-        String tecla;
-
         //Mover entre el tablero
         while((cantidadPremios > 0) && (vidas > 0)){
+            String tecla;
+
             System.out.print("Accion : ");
             tecla = accionesJuego.nextLine();
+
                 switch (tecla.toLowerCase()){
                     case ARRIBA:
                         if(matrizTableroP[Pacman_x - 1][Pacman_y] == PARED){
@@ -324,7 +324,17 @@ public class principal {
                             setPunteoVidas(tecla);
                             matrizTableroP[Pacman_x][Pacman_y] = BLANCO;
                             if(Pacman_x - 1 == 0 && matrizTableroP[nFilas - 2][Pacman_y] != PARED){
-                                Pacman_x = nFilas-1;
+                                Pacman_x = nFilas - 1;
+                                if(matrizTableroP[nFilas - 2][Pacman_y] == PREMIO_ESPECIAL){
+                                    punteo += 15;
+                                    cantidadPremios--;
+                                } else if(matrizTableroP[nFilas - 2][Pacman_y] == PREMIO_SIMPLE){
+                                    punteo += 10;
+                                    cantidadPremios--;
+                                } else if(matrizTableroP[nFilas - 2][Pacman_y] == FANTASMA){
+                                    vidas --;
+                                }
+
                             } else if(Pacman_x - 1 == 0 && matrizTableroP[nFilas - 2][Pacman_y] == PARED){
                                 Pacman_x++;
                                 System.out.println(mensajeAlerta);
@@ -340,9 +350,18 @@ public class principal {
                         }else{
                             setPunteoVidas(tecla);
                             matrizTableroP[Pacman_x][Pacman_y] = BLANCO;
-                            if(Pacman_x + 1 == nFilas-1 && matrizTableroP[1][Pacman_y] != PARED){
+                            if(Pacman_x + 1 == nFilas - 1 && matrizTableroP[1][Pacman_y] != PARED){
                                 Pacman_x = 0;
-                            } else if(Pacman_x + 1 == nFilas-1 && matrizTableroP[1][Pacman_y] == PARED){
+                                if(matrizTableroP[1][Pacman_y] == PREMIO_ESPECIAL){
+                                    punteo += 15;
+                                    cantidadPremios--;
+                                } else if(matrizTableroP[1][Pacman_y] == PREMIO_SIMPLE){
+                                    punteo += 10;
+                                    cantidadPremios--;
+                                } else if(matrizTableroP[1][Pacman_y] == FANTASMA){
+                                    vidas --;
+                                }
+                            } else if(Pacman_x + 1 == nFilas - 1 && matrizTableroP[1][Pacman_y] == PARED){
                                 Pacman_x --;
                                 System.out.println(mensajeAlerta);
                             }
@@ -360,6 +379,15 @@ public class principal {
                             matrizTableroP[Pacman_x][Pacman_y] = BLANCO;
                             if(Pacman_y + 1 == nColumnas - 1 && matrizTableroP[Pacman_x][1] != PARED ){
                                 Pacman_y = 0;
+                                if(matrizTableroP[Pacman_x][1] == PREMIO_ESPECIAL){
+                                    punteo += 15;
+                                    cantidadPremios--;
+                                } else if(matrizTableroP[Pacman_x][1] == PREMIO_SIMPLE){
+                                    punteo += 10;
+                                    cantidadPremios--;
+                                } else if(matrizTableroP[Pacman_x][1] == FANTASMA){
+                                    vidas --;
+                                }
                             } else if(Pacman_y + 1 == nColumnas - 1 && matrizTableroP[Pacman_x][1] == PARED){
                                 Pacman_y--;
                                 System.out.println(mensajeAlerta);
@@ -378,6 +406,15 @@ public class principal {
                             matrizTableroP[Pacman_x][Pacman_y] = BLANCO;
                             if((Pacman_y - 1 == 0) && (matrizTableroP[Pacman_x][nColumnas - 2] != PARED)){
                                 Pacman_y = nColumnas-1;
+                                if(matrizTableroP[Pacman_x][nColumnas - 2] == PREMIO_ESPECIAL){
+                                    punteo += 15;
+                                    cantidadPremios--;
+                                } else if(matrizTableroP[Pacman_x][nColumnas - 2] == PREMIO_SIMPLE){
+                                    punteo += 10;
+                                    cantidadPremios--;
+                                } else if(matrizTableroP[Pacman_x][nColumnas - 2 ] == FANTASMA){
+                                    vidas --;
+                                }
                             } else if((Pacman_y - 1 == 0) && matrizTableroP[Pacman_x][nColumnas - 2] == PARED){
                                 Pacman_y++;
                                 System.out.println(mensajeAlerta);
@@ -409,10 +446,10 @@ public class principal {
     public static void setPunteoVidas(String _tecla){
         switch (_tecla){
             case ARRIBA:
-                if(matrizTableroP[Pacman_x - 1][Pacman_y] == PREMIO_ESPECIAL || matrizTableroP[nFilas - 2][Pacman_y] == PREMIO_ESPECIAL){
+                if(matrizTableroP[Pacman_x - 1][Pacman_y] == PREMIO_ESPECIAL){
                     punteo += 15;
                     cantidadPremios--;
-                } else if(matrizTableroP[Pacman_x - 1][Pacman_y] == PREMIO_SIMPLE || matrizTableroP[nFilas - 2][Pacman_y] == PREMIO_SIMPLE){
+                } else if(matrizTableroP[Pacman_x - 1][Pacman_y] == PREMIO_SIMPLE){
                     punteo += 10;
                     cantidadPremios--;
                 } else if(matrizTableroP[Pacman_x - 1][Pacman_y] == FANTASMA){
@@ -420,10 +457,10 @@ public class principal {
                 }
                 break;
             case ABAJO:
-                if(matrizTableroP[Pacman_x + 1][Pacman_y] == PREMIO_ESPECIAL || matrizTableroP[1][Pacman_y] == PREMIO_ESPECIAL){
+                if(matrizTableroP[Pacman_x + 1][Pacman_y] == PREMIO_ESPECIAL){
                     punteo += 15;
                     cantidadPremios--;
-                } else if(matrizTableroP[Pacman_x + 1][Pacman_y] == PREMIO_SIMPLE || matrizTableroP[1][Pacman_y] == PREMIO_ESPECIAL){
+                } else if(matrizTableroP[Pacman_x + 1][Pacman_y] == PREMIO_SIMPLE){
                     punteo += 10;
                     cantidadPremios--;
                 } else if(matrizTableroP[Pacman_x + 1][Pacman_y] == FANTASMA){
@@ -431,21 +468,21 @@ public class principal {
                 }
                 break;
             case DERECHA:
-                if(matrizTableroP[Pacman_x][Pacman_y + 1] == PREMIO_ESPECIAL || matrizTableroP[Pacman_x][1] == PREMIO_ESPECIAL){
+                if(matrizTableroP[Pacman_x][Pacman_y + 1] == PREMIO_ESPECIAL){
                     punteo += 15;
                     cantidadPremios--;
-                } else if(matrizTableroP[Pacman_x][Pacman_y + 1] == PREMIO_SIMPLE || matrizTableroP[Pacman_x][1] == PREMIO_SIMPLE){
+                } else if(matrizTableroP[Pacman_x][Pacman_y + 1] == PREMIO_SIMPLE){
                     punteo += 10;
                     cantidadPremios--;
-                } else if( matrizTableroP[Pacman_x][Pacman_y + 1] == FANTASMA){
+                } else if(matrizTableroP[Pacman_x][Pacman_y + 1] == FANTASMA){
                     vidas--;
                 }
                 break;
             case IZQUIERDA:
-                if(matrizTableroP[Pacman_x][Pacman_y - 1] == PREMIO_ESPECIAL || matrizTableroP[Pacman_x][nColumnas - 2] == PREMIO_ESPECIAL){
+                if(matrizTableroP[Pacman_x][Pacman_y - 1] == PREMIO_ESPECIAL){
                     punteo += 15;
                     cantidadPremios--;
-                } else if(matrizTableroP[Pacman_x][Pacman_y - 1] == PREMIO_SIMPLE || matrizTableroP[Pacman_x][nColumnas - 2] == PREMIO_SIMPLE){
+                } else if(matrizTableroP[Pacman_x][Pacman_y - 1] == PREMIO_SIMPLE){
                     punteo += 10;
                     cantidadPremios--;
                 } else if(matrizTableroP[Pacman_x][Pacman_y - 1] == FANTASMA){
@@ -479,9 +516,7 @@ public class principal {
         }
 
         //Rellenar con Premios
-
         int llenadoPremios  = calcularPremios();
-
         while(llenadoPremios > 0){
             int numeroRan_x = (int)(ran.nextDouble()*(nFilas-2));
             int numeroRan_y = (int)(ran.nextDouble()*(nColumnas-2));
@@ -525,10 +560,8 @@ public class principal {
                 }
             }
         }
-
         //Llenar con fantasmas
         int porcentajeFantasmas = (int)Math.round(((nFilas-2) * (nColumnas-2))*(opciones_trampas/100.0));
-        System.out.println(porcentajeFantasmas);
         for(int f = 0 ; f < porcentajeFantasmas; f++){
             int numeroRan_x = (int)(ran.nextDouble()*nFilas);
             int numeroRan_y = (int)(ran.nextDouble()*nColumnas);
@@ -542,7 +575,6 @@ public class principal {
                 }
             }
         }
-
         //Dejar espacios en blanco
         for(int i = 0; i < nFilas ; i++){
             for (int j = 0; j < nColumnas; j++){
