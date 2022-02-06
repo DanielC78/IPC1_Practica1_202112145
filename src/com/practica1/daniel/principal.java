@@ -423,7 +423,6 @@ public class principal {
                             matrizTableroP[Pacman_x][Pacman_y] = PACMAN_IZQ;
                         }
                         break;
-
                     case PAUSA:
                         menuPausa();
                         break;
